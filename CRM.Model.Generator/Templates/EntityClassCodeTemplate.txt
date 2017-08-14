@@ -23,7 +23,7 @@ namespace [@DefaultNamespace]
     /// Warning : This file has been generated with a tool : DO NOT EDIT IT
 	/// </summary>
 	[CrmEntity(EntityLogicalName)]
-	public class [@EntityCustomName] : ICrmModel
+	public class [@EntityCustomName] : [@EntityBaseType]ICrmModel
 	{
 		public const string EntityLogicalName = "[@Entity.LogicalName]";
 		public const int EntityTypeCode = [@Entity.ObjectTypeCode.Value];

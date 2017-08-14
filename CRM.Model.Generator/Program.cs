@@ -34,6 +34,8 @@ namespace Crm.Model.Generator
 
         private static string DefaultNamespace;
 
+        private static string EntityBaseType;
+
         private static string EntityClassCodeTemplate;
 
         private static string GlobalOptionSetClassCodeTemplate;
@@ -58,6 +60,8 @@ namespace Crm.Model.Generator
                 string outputPath = ConfigurationManager.AppSettings["Folder.Path"];
                 TargetPath = Path.Combine(outputPath, "Crm.Model.Data");
                 DefaultNamespace = ConfigurationManager.AppSettings["DefaultNamespace"];
+                EntityBaseType = ConfigurationManager.AppSettings["EntityBaseType"];
+
                 if (Directory.Exists(TargetPath))
                 {
                     try
@@ -158,7 +162,7 @@ namespace Crm.Model.Generator
                         path += @"\System\";
                     }
                     string fileName = Path.Combine(path, string.Format("{0}.generated.cs", entityCustomName));
-                    File.WriteAllText(fileName, GenerateEntityClassCode(currentEntity, entityCustomName));
+                    File.WriteAllText(fileName, GenerateEntityClassCode(currentEntity, entityCustomName, EntityBaseType));
                 }
 
                 string csvFileName = Path.Combine(TargetPath, "MetaData.csv");
@@ -198,13 +202,17 @@ namespace Crm.Model.Generator
         /// <param name="currentEntity">The entity metadata object</param>
         /// <param name="entityCustomName">The entity name for definition class</param>
         /// <returns>Entity definition class code</returns>
-        private static string GenerateEntityClassCode(EntityMetadata currentEntity, string entityCustomName)
+        private static string GenerateEntityClassCode(EntityMetadata currentEntity, string entityCustomName, string baseType)
         {
             string entityClassCode = EntityClassCodeTemplate;
             entityClassCode = entityClassCode.Replace("[@DefaultNamespace]", DefaultNamespace);
             entityClassCode = entityClassCode.Replace("[@EntityCustomName]", entityCustomName);
             entityClassCode = entityClassCode.Replace("[@Entity.SchemaName]", currentEntity.SchemaName);
             entityClassCode = entityClassCode.Replace("[@Entity.LogicalName]", currentEntity.LogicalName);
+
+            baseType = String.IsNullOrWhiteSpace(baseType) ? "" : $"{baseType}, ";
+
+            entityClassCode = entityClassCode.Replace("[@EntityBaseType]", baseType);
 
             string description = currentEntity.SchemaName;
             if (currentEntity.Description.UserLocalizedLabel != null)
