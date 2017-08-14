@@ -32,7 +32,7 @@ namespace Crm.Model.Generator
     {
         private static string AttributeCodeTemplate;
 
-        private const string DefaultNamespace = "CRM.Model";
+        private static string DefaultNamespace;
 
         private static string EntityClassCodeTemplate;
 
@@ -57,6 +57,7 @@ namespace Crm.Model.Generator
             {
                 string outputPath = ConfigurationManager.AppSettings["Folder.Path"];
                 TargetPath = Path.Combine(outputPath, "Crm.Model.Data");
+                DefaultNamespace = ConfigurationManager.AppSettings["DefaultNamespace"];
                 if (Directory.Exists(TargetPath))
                 {
                     try
