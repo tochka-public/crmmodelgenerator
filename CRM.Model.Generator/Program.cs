@@ -398,7 +398,7 @@ namespace Crm.Model.Generator
                 {
                     attributeCode = AttributeCodeTemplate;
                 }
-                attributeCode = attributeCode.Replace("[@Attribute.Description]", description);
+                attributeCode = attributeCode.Replace("[@Attribute.Description]", TransformToSymmary(description));
                 attributeCode = attributeCode.Replace("[@Attribute.DisplayName]", displayName);
                 attributeCode = attributeCode.Replace("[@Attribute.SchemaName]", currentAttribute.SchemaName);
                 attributeCode = attributeCode.Replace("[@Attribute.LogicalName]", currentAttribute.LogicalName);
@@ -417,7 +417,7 @@ namespace Crm.Model.Generator
 
                 if (currentAttribute.AttributeType.Value == AttributeTypeCode.Picklist)
                 {
-                    attributeCode = attributeCode.Replace("[@OptionSet.Description]", description);
+                    attributeCode = attributeCode.Replace("[@OptionSet.Description]", TransformToSymmary(description));
                     attributeCode = attributeCode.Replace("[@OptionSet.DisplayName]", displayName);
                     attributeCode = attributeCode.Replace("[@OptionSet.SchemaName]", currentAttribute.SchemaName);
                     attributeCode = attributeCode.Replace("[@OptionSet.LogicalName]", currentAttribute.LogicalName);
@@ -433,7 +433,7 @@ namespace Crm.Model.Generator
                         var value = option.Value.Value.ToString(CultureInfo.InvariantCulture);
 
                         string optionSetEnumCode = OptionSetEnumCodeTemplate;
-                        optionSetEnumCode = optionSetEnumCode.Replace("[@Option.Description]", desc);
+                        optionSetEnumCode = optionSetEnumCode.Replace("[@Option.Description]", TransformToSymmary(desc));
                         optionSetEnumCode = optionSetEnumCode.Replace("[@Option.Label]", label);
                         optionSetEnumCode = optionSetEnumCode.Replace("[@Option.Value]", value);
                         optionSetEnums += optionSetEnumCode;
@@ -478,7 +478,7 @@ namespace Crm.Model.Generator
                 }
 
                 optionSetCode = optionSetCode.Replace("[@OptionSet.DisplayName]", displayName);
-                optionSetCode = optionSetCode.Replace("[@OptionSet.Description]", description);
+                optionSetCode = optionSetCode.Replace("[@OptionSet.Description]", TransformToSymmary(description));
                 optionSetCode = optionSetCode.Replace("[@OptionSet.SchemaName]", optionSet.Name);
                 optionSetCode = optionSetCode.Replace("[@OptionSet.OptionSetType.Value]", optionSet.OptionSetType.Value.ToString());
                 optionSetCode = optionSetCode.Replace("[@OptionSet.LogicalName]", optionSet.Name);
@@ -498,7 +498,7 @@ namespace Crm.Model.Generator
                             var label2 = optionCount + "_" + ConvertNameAsVariable(desc);
 
                             string optionSetEnumCode = OptionSetEnumCodeTemplate;
-                            optionSetEnumCode = optionSetEnumCode.Replace("[@Option.Description]", desc);
+                            optionSetEnumCode = optionSetEnumCode.Replace("[@Option.Description]", TransformToSymmary(desc));
                             optionSetEnumCode = optionSetEnumCode.Replace("[@Option.Label]", label2);
                             optionSetEnumCode = optionSetEnumCode.Replace("[@Option.Value]", value);
                             optionSetEnums += optionSetEnumCode;
@@ -534,6 +534,12 @@ namespace Crm.Model.Generator
             string fileName = Path.Combine(TargetPath, "GlobalOptionSet.cs");
             File.WriteAllText(fileName, classContent);
         }
+
+        private static string TransformToSymmary(string desc)
+        {
+            return desc?.Replace("\n", "\n /// ");
+        }
+
         #endregion
 
         #region Get Option Set Label
@@ -643,5 +649,7 @@ namespace Crm.Model.Generator
             return variable;
         }
         #endregion
+
+
     }
 }
