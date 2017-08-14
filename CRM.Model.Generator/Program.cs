@@ -42,6 +42,8 @@ namespace Crm.Model.Generator
 
         private static string GlobalOptionSetCodeTemplate;
 
+        private static string AttributePropertyTemplate;
+
         private static string OptionSetEnumCodeTemplate;
 
         private static string TargetPath;
@@ -101,6 +103,7 @@ namespace Crm.Model.Generator
                 GlobalOptionSetClassCodeTemplate = LoadTemplateCode(TemplateNames.GlobalOptionSetClassCodeTemplate);
                 GlobalOptionSetCodeTemplate = LoadTemplateCode(TemplateNames.GlobalOptionSetCodeTemplate);
                 OptionSetEnumCodeTemplate = LoadTemplateCode(TemplateNames.OptionSetEnumCodeTemplate);
+                AttributePropertyTemplate = LoadTemplateCode(TemplateNames.AttributePropertyTemplate);
 
                 Console.WriteLine("Connection : initializing ...");
                 InitializeConnection();
@@ -240,6 +243,9 @@ namespace Crm.Model.Generator
             string customAttributesCode = LoadAttributes(customAttributes);
             entityClassCode = entityClassCode.Replace("[@CustomAttributes]", customAttributesCode);
 
+            string customPropertiesCode = LoadProperties(customAttributes);
+            entityClassCode = entityClassCode.Replace("[@CustomAttributeProperties]", customPropertiesCode);
+
             var systemAttributes = currentEntity.Attributes.Where(a => a.IsCustomAttribute == false).OrderBy(a => a.SchemaName).ToList();
             systemAttributes = systemAttributes.Where(a => a.AttributeOf == null).ToList();
             systemAttributes = systemAttributes.Where(a => a.AttributeType != null).ToList();
@@ -254,6 +260,9 @@ namespace Crm.Model.Generator
             systemAttributes = systemAttributes.Where(a => !a.LogicalName.EndsWith("_base")).ToList();
             string systemAttributesCode = LoadAttributes(systemAttributes);
             entityClassCode = entityClassCode.Replace("[@SystemAttributes]", systemAttributesCode);
+
+            string systemPropertiesCode = LoadProperties(systemAttributes);
+            entityClassCode = entityClassCode.Replace("[@SystemAttributeProperties]", systemPropertiesCode);
 
             var lookupsAttributes = currentEntity.Attributes.OrderBy(a => a.SchemaName).ToList();
             lookupsAttributes = lookupsAttributes.Where(a => a.AttributeType != null).ToList();
@@ -270,6 +279,7 @@ namespace Crm.Model.Generator
 
             return entityClassCode;
         }
+
         #endregion
 
         #region Get Attribute Length
@@ -455,6 +465,77 @@ namespace Crm.Model.Generator
             }
             return attributesCode;
         }
+
+
+        private static string LoadProperties(List<AttributeMetadata> attributes)
+        {
+            List<String> propertyCodes = new List<string>();
+
+            foreach (AttributeMetadata attr in attributes)
+            {
+                var proppertyCode = AttributePropertyTemplate;
+
+
+                string displayName = attr.SchemaName;
+                if (attr.DisplayName.UserLocalizedLabel != null)
+                {
+                    displayName = attr.DisplayName.UserLocalizedLabel.Label;
+                }
+
+                string description = displayName;
+                if (attr.Description.UserLocalizedLabel != null)
+                {
+                    description = attr.Description.UserLocalizedLabel.Label;
+                }
+                
+                proppertyCode = proppertyCode.Replace("[@Attribute.Description]", TransformToSymmary(description));
+                proppertyCode = proppertyCode.Replace("[@Attribute.LogicalName]", attr.LogicalName);
+                proppertyCode = proppertyCode.Replace("[@Attribute.Type]", GetCsType(attr));
+                proppertyCode = proppertyCode.Replace("[@Attribute.SchemaName]", attr.SchemaName);
+
+
+                propertyCodes.Add(proppertyCode);
+            }
+
+            return String.Join("\r\n", propertyCodes);
+        }
+
+        private static string GetCsType(AttributeMetadata attr)
+        {
+            switch (attr.AttributeType.Value)
+            {
+                case AttributeTypeCode.Boolean:
+                    return "bool?";
+                case AttributeTypeCode.DateTime:
+                    return "DateTime?";
+                case AttributeTypeCode.Decimal:
+                case AttributeTypeCode.Money:
+                    return "decimal?";
+                case AttributeTypeCode.Double:
+                    return "double?";
+                case AttributeTypeCode.Integer:
+                    return "int?";
+                case AttributeTypeCode.Lookup:
+                    return "Microsoft.Xrm.Sdk.EntityReference";
+                case AttributeTypeCode.Memo:
+                case AttributeTypeCode.String:
+                case AttributeTypeCode.EntityName:
+                    return "string";
+                case AttributeTypeCode.Picklist:
+                case AttributeTypeCode.State:
+                case AttributeTypeCode.Status:
+                    return "Microsoft.Xrm.Sdk.OptionSetValue";
+                case AttributeTypeCode.Uniqueidentifier:
+                    return "Guid?";
+                case AttributeTypeCode.PartyList:
+                    return "Microsoft.Xrm.Sdk.EntityCollection";
+
+                default:
+                    return attr.AttributeType.Value.ToString();
+                //throw new NotSupportedException($"AttributeType {attr.AttributeType.Value} not supported");
+            }
+        }
+
         #endregion
 
         #region Load Global Option Set

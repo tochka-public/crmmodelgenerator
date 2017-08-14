@@ -1,0 +1,6 @@
+
+		/// <summary>
+		/// [@Attribute.Description]
+		/// </summary>
+        [CrmAttribute("[@Attribute.LogicalName]")]
+        public [@Attribute.Type] [@Attribute.SchemaName] { get => ([@Attribute.Type])Raw.Attributes["[@Attribute.LogicalName]"]; set => Raw.Attributes["[@Attribute.LogicalName]"] = value; }

@@ -16,37 +16,57 @@ using System;
 
 namespace [@DefaultNamespace]
 {
-	/// <summary>
-	/// Metadata definition for [@Entity.SchemaName]
-	/// [@EntityDescription]
+
+    /// <summary>
+    /// Metadata definition for [@Entity.SchemaName]
+    /// [@EntityDescription]
     /// 
     /// Warning : This file has been generated with a tool : DO NOT EDIT IT
-	/// </summary>
-	[CrmEntity(EntityLogicalName)]
-	public class [@EntityCustomName] : [@EntityBaseType]ICrmModel
-	{
-		public const string EntityLogicalName = "[@Entity.LogicalName]";
-		public const int EntityTypeCode = [@Entity.ObjectTypeCode.Value];
+    /// </summary>
+    public static class [@EntityCustomName]Metadata
+    {
+	    public const string EntityLogicalName = "[@Entity.LogicalName]";
+	    public const int EntityTypeCode = [@Entity.ObjectTypeCode.Value];
 
-		public static class Fields
-		{
-			#region Custom Attributes
-			[@CustomAttributes]
-			#endregion Custom Attributes
+	    public static class Fields
+	    {
+		    #region Custom Attributes
+		    [@CustomAttributes]
+		    #endregion Custom Attributes
 
-			#region System Attributes
-			[@SystemAttributes]
-			#endregion System Attributes
-		}
+		    #region System Attributes
+		    [@SystemAttributes]
+		    #endregion System Attributes
+	    }
 
-		public static class Lookups
-		{
-			[@Lookups]
-		}
+	    public static class Lookups
+	    {
+		    [@Lookups]
+	    }
 
-		public static class OptionSets
-		{
-			[@OptionSets]
-		}
-	}
+	    public static class OptionSets
+	    {
+		    [@OptionSets]
+	    }
+    }
+
+    /// <summary>
+    /// Metadata definition for [@Entity.SchemaName]
+    /// [@EntityDescription]
+    /// 
+    /// Warning : This file has been generated with a tool : DO NOT EDIT IT
+    /// </summary>
+    [CrmEntity("[@Entity.LogicalName]")]
+    public class [@EntityCustomName] : [@EntityBaseType]ICrmModel
+    {
+        const string entityLogicalName = "[@Entity.LogicalName]";        
+        public [@EntityCustomName]():base(entityLogicalName)
+        {
+        }
+
+        [@CustomAttributeProperties]
+
+        [@SystemAttributeProperties]
+    
+    }
 }

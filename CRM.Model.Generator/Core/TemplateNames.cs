@@ -21,5 +21,7 @@ namespace Crm.Model.Generator
         public const string GlobalOptionSetCodeTemplate = "GlobalOptionSetCodeTemplate";
 
         public const string OptionSetEnumCodeTemplate = "OptionSetEnumCodeTemplate";
+
+        public const string AttributePropertyTemplate = "AttributePropertyTemplate";
     }
 }
