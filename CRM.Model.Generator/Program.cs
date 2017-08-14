@@ -156,7 +156,7 @@ namespace Crm.Model.Generator
                     {
                         path += @"\System\";
                     }
-                    string fileName = Path.Combine(path, string.Format("{0}.cs", entityCustomName));
+                    string fileName = Path.Combine(path, string.Format("{0}.generated.cs", entityCustomName));
                     File.WriteAllText(fileName, GenerateEntityClassCode(currentEntity, entityCustomName));
                 }
 
@@ -531,7 +531,7 @@ namespace Crm.Model.Generator
             classContent = classContent.Replace("[@DefaultNamespace]", DefaultNamespace);
             classContent = classContent.Replace("[@OptionSetDefinition]", content);
 
-            string fileName = Path.Combine(TargetPath, "GlobalOptionSet.cs");
+            string fileName = Path.Combine(TargetPath, "GlobalOptionSet.generated.cs");
             File.WriteAllText(fileName, classContent);
         }
 
