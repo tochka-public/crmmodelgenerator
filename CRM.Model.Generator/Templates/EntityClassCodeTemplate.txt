@@ -64,9 +64,15 @@ namespace [@DefaultNamespace]
         {
         }
 
+#region Attrubute properties - custom
         [@CustomAttributeProperties]
 
+#endregion
+
+#region Attrubute properties - system
         [@SystemAttributeProperties]
-    
+
+#endregion
+
     }
 }
