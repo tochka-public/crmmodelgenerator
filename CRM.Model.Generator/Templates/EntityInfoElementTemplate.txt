@@ -1,0 +1,3 @@
+
+        [CrmEntityInfo([@Etc], "[@LogicalName]", [@DisplayName])]
+        [@Name],

@@ -1,0 +1,19 @@
+// =====================================================================
+//  This file has been generated with a tool : DO NOT EDIT IT
+// =====================================================================
+
+#region  == Using == 
+using System;
+
+#endregion
+
+namespace [@DefaultNamespace]
+{
+    public enum CrmEntities{
+    
+        Undefined = 0,
+
+        [@EntityEntries]
+
+    }
+}

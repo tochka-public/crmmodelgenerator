@@ -8,7 +8,7 @@
 // =====================================================================
 #endregion
 
-namespace Crm.Model.Generator
+namespace CRM.Model.Generator.Core
 {
     public static class TemplateNames
     {
@@ -23,5 +23,7 @@ namespace Crm.Model.Generator
         public const string OptionSetEnumCodeTemplate = "OptionSetEnumCodeTemplate";
 
         public const string AttributePropertyTemplate = "AttributePropertyTemplate";
+        public const string EntityInfoEnumCodeTemplate = "EntityInfoEnumCodeTemplate";
+        public const string EntityInfoElementTemplate = "EntityInfoElementTemplate";
     }
 }

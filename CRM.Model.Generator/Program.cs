@@ -8,6 +8,8 @@
 // =====================================================================
 #endregion
 
+using CRM.Model.Generator.Core;
+
 namespace Crm.Model.Generator
 {
     #region  == Using == 
@@ -45,6 +47,11 @@ namespace Crm.Model.Generator
         private static string AttributePropertyTemplate;
 
         private static string OptionSetEnumCodeTemplate;
+
+        public static string EntityInfoEnumCodeTemplate;
+
+        public static string EntityInfoElementTemplate;
+
 
         private static string TargetPath;
 
@@ -87,13 +94,13 @@ namespace Crm.Model.Generator
                         }
                     }
                 }
-                Thread.Sleep(2000);
+                Thread.Sleep(500);
 
                 if (!Directory.Exists(TargetPath))
                 {
                     Directory.CreateDirectory(TargetPath);
                 }
-                Thread.Sleep(2000);
+                Thread.Sleep(500);
 
                 Directory.CreateDirectory(Path.Combine(TargetPath, "Custom"));
                 Directory.CreateDirectory(Path.Combine(TargetPath, "System"));
@@ -104,6 +111,8 @@ namespace Crm.Model.Generator
                 GlobalOptionSetCodeTemplate = LoadTemplateCode(TemplateNames.GlobalOptionSetCodeTemplate);
                 OptionSetEnumCodeTemplate = LoadTemplateCode(TemplateNames.OptionSetEnumCodeTemplate);
                 AttributePropertyTemplate = LoadTemplateCode(TemplateNames.AttributePropertyTemplate);
+                EntityInfoElementTemplate = LoadTemplateCode(TemplateNames.EntityInfoElementTemplate);
+                EntityInfoEnumCodeTemplate = LoadTemplateCode(TemplateNames.EntityInfoEnumCodeTemplate);
 
                 Console.WriteLine("Connection : initializing ...");
                 InitializeConnection();
@@ -118,8 +127,14 @@ namespace Crm.Model.Generator
                 Console.WriteLine("Metadata : Loaded!");
                 Console.WriteLine("Entities : processing ...");
 
+
+                string entMapFileName = Path.Combine(TargetPath, "EntityInfo.genereted.cs");
+                File.WriteAllText(entMapFileName, BuildEntityInfoEnumCode(entities));
+                Console.WriteLine("Entities : Map generated");
+
                 StringBuilder csvExtract = new StringBuilder();
-                csvExtract.AppendLine("Entité, Table, Code, Nom complet, Nom, Type, N, R, S, A, Règle, Taille");
+                csvExtract.AppendLine("Entity, Table, Code, Nom complet, Nom, Type, N, R, S, A, Règle, Taille");
+
                 foreach (EntityMetadata currentEntity in entities)
                 {
                     Console.WriteLine("  Entity : {0}", currentEntity.LogicalName);
@@ -151,8 +166,6 @@ namespace Crm.Model.Generator
                             ));
                     }
 
-                    string entityCustomClassName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(currentEntity.SchemaName);
-
                     string entityCustomName = string.Concat("Crm", Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(currentEntity.SchemaName));
                     string path = TargetPath;
                     if (currentEntity.IsCustomEntity.HasValue
@@ -183,6 +196,29 @@ namespace Crm.Model.Generator
                 Console.WriteLine("Done.");
             }
         }
+
+        private static string BuildEntityInfoEnumCode(EntityMetadata[] entities)
+        {
+            StringBuilder entitiesMap = new StringBuilder();
+            
+            foreach (var entity in entities.OrderBy(x => x.ObjectTypeCode))
+            {
+               // string entityCustomClassName = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(entity.SchemaName);
+
+                var map = EntityInfoElementTemplate;
+                map = map.Replace("[@Name]", entity.SchemaName);
+                map = map.Replace("[@Etc]", entity.ObjectTypeCode.ToString());
+                map = map.Replace("[@LogicalName]", entity.LogicalName);
+                map = map.Replace("[@DisplayName]", Helpers.ToLiteral(entity.DisplayName?.UserLocalizedLabel?.Label));
+                entitiesMap.Append(map);
+            }
+
+            var mapClass = EntityInfoEnumCodeTemplate;
+            mapClass = mapClass.Replace("[@DefaultNamespace]", DefaultNamespace);
+            mapClass = mapClass.Replace("[@EntityEntries]", entitiesMap.ToString());
+            return mapClass;
+        }
+
         #endregion
 
         #region Retrieve Entity Metadata
