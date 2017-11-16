@@ -243,6 +243,7 @@ namespace Crm.Model.Generator
         /// <returns>Entity definition class code</returns>
         private static string GenerateEntityClassCode(EntityMetadata currentEntity, string entityCustomName, string baseType)
         {
+            
             string entityClassCode = EntityClassCodeTemplate;
             entityClassCode = entityClassCode.Replace("[@DefaultNamespace]", DefaultNamespace);
             entityClassCode = entityClassCode.Replace("[@EntityCustomName]", entityCustomName);
@@ -270,13 +271,17 @@ namespace Crm.Model.Generator
             customAttributes = customAttributes.Where(a => a.AttributeType != null).ToList();
             customAttributes = customAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Customer).ToList();
             customAttributes = customAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Owner).ToList();
-            customAttributes = customAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Lookup).ToList();
-            customAttributes = customAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Picklist).ToList();
             customAttributes = customAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Virtual).ToList();
             customAttributes = customAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.BigInt).ToList();
             customAttributes = customAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.ManagedProperty).ToList();
             customAttributes = customAttributes.Where(a => !a.LogicalName.EndsWith("_base")).ToList();
-            string customAttributesCode = LoadAttributes(customAttributes);
+
+            var customAttributesWithoutLookupsAndPicklists = customAttributes
+                .Where(a => a.AttributeType.Value != AttributeTypeCode.Lookup)
+                .Where(a => a.AttributeType.Value != AttributeTypeCode.Picklist)
+                .ToList();
+
+            string customAttributesCode = LoadAttributes(customAttributesWithoutLookupsAndPicklists);
             entityClassCode = entityClassCode.Replace("[@CustomAttributes]", customAttributesCode);
 
             string customPropertiesCode = LoadProperties(customAttributes);
@@ -287,14 +292,18 @@ namespace Crm.Model.Generator
             systemAttributes = systemAttributes.Where(a => a.AttributeType != null).ToList();
             systemAttributes = systemAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Customer).ToList();
             systemAttributes = systemAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Owner).ToList();
-            systemAttributes = systemAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Lookup).ToList();
-            systemAttributes = systemAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Picklist).ToList();
             systemAttributes = systemAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Virtual).ToList();
             systemAttributes = systemAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.BigInt).ToList();
             systemAttributes = systemAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.ManagedProperty).ToList();
             systemAttributes = systemAttributes.Where(a => a.AttributeType.Value != AttributeTypeCode.Customer).ToList();
             systemAttributes = systemAttributes.Where(a => !a.LogicalName.EndsWith("_base")).ToList();
-            string systemAttributesCode = LoadAttributes(systemAttributes);
+
+            var systemAttributesWithoutLookupsAndPicklists = systemAttributes
+                .Where(a => a.AttributeType.Value != AttributeTypeCode.Lookup)
+                .Where(a => a.AttributeType.Value != AttributeTypeCode.Picklist)
+                .ToList();
+
+            string systemAttributesCode = LoadAttributes(systemAttributesWithoutLookupsAndPicklists);
             entityClassCode = entityClassCode.Replace("[@SystemAttributes]", systemAttributesCode);
 
             string systemPropertiesCode = LoadProperties(systemAttributes);
