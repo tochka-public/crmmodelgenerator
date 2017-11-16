@@ -62,6 +62,7 @@ namespace [@DefaultNamespace]
         const string entityLogicalName = "[@Entity.LogicalName]";        
         public [@EntityCustomName]():base(entityLogicalName)
         {
+            SelfEntityTypeCode = [@EntityCustomName]Metadata.EntityTypeCode;
         }
 
 #region Attrubute properties - custom
