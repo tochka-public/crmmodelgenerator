@@ -8,6 +8,7 @@
 // =====================================================================
 #endregion
 
+using CommandLine;
 using CRM.Model.Generator.Core;
 
 namespace Crm.Model.Generator
@@ -30,7 +31,7 @@ namespace Crm.Model.Generator
 
     #endregion
 
-    internal class Program
+    internal partial class Program
     {
         private static string AttributeCodeTemplate;
 
@@ -58,18 +59,26 @@ namespace Crm.Model.Generator
         private static OrganizationService organizationService;
 
         #region Main
+
         /// <summary>
         /// Program entry point
         /// </summary>
         /// <param name="args"></param>
         private static void Main(string[] args)
         {
+            CommandLine.Parser.Default.ParseArguments<Options>(args)
+                .WithParsed(DoWork);
+        }
+
+
+        private static void DoWork(Options opts)
+        {
             try
             {
-                string outputPath = ConfigurationManager.AppSettings["Folder.Path"];
+                string outputPath = opts.TargetPath ?? ConfigurationManager.AppSettings["Folder.Path"];
                 TargetPath = Path.Combine(outputPath, "Crm.Model.Data");
-                DefaultNamespace = ConfigurationManager.AppSettings["DefaultNamespace"];
-                EntityBaseType = ConfigurationManager.AppSettings["EntityBaseType"];
+                DefaultNamespace = opts.DefaultNamespace ?? ConfigurationManager.AppSettings["DefaultNamespace"];
+                EntityBaseType = opts.EntityBaseType ?? ConfigurationManager.AppSettings["EntityBaseType"];
 
                 if (Directory.Exists(TargetPath))
                 {
@@ -115,7 +124,7 @@ namespace Crm.Model.Generator
                 EntityInfoEnumCodeTemplate = LoadTemplateCode(TemplateNames.EntityInfoEnumCodeTemplate);
 
                 Console.WriteLine("Connection : initializing ...");
-                InitializeConnection();
+                InitializeConnection(opts);
                 Console.WriteLine("Connection : initialized!");
 
                 Console.WriteLine("Option Set : Loading ...");
@@ -421,9 +430,9 @@ namespace Crm.Model.Generator
         /// <summary>
         /// Initialize proxy with server connection settings
         /// </summary>
-        private static void InitializeConnection()
+        private static void InitializeConnection(Options opt)
         {
-            string crmConnectionString = ConfigurationManager.AppSettings["Crm.ConnectionString"];
+            string crmConnectionString = opt.CrmConnection ?? ConfigurationManager.AppSettings["Crm.ConnectionString"];
             CrmConnection crmConnection = CrmConnection.Parse(crmConnectionString);
             organizationService = new OrganizationService(crmConnection);
         }

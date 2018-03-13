@@ -44,6 +44,9 @@
     <ApplicationIcon>crm.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=2.2.1.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>packages\CommandLineParser.2.2.1\lib\net45\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Crm.Sdk.Proxy, Version=7.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Dynamics.Crm.Sdk.Clean.7.1.2.1\lib\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
     </Reference>
@@ -68,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Core\Helpers.cs" />
     <Compile Include="Core\TemplateNames.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
